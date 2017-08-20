@@ -57,16 +57,18 @@ public class MessageUtil {
         return MethodInfos;
     }
 
-    public static Map<Class<?>, ResponseMessage> loadResponseMessage(String... pkgs) {
-        Map<Class<?>, ResponseMessage> MethodInfos = new HashMap<>();
+    public static Map<Class<?>, ProtobufMessage> loadResponseMessage(String... pkgs) {
+        Map<Class<?>, ProtobufMessage> MethodInfos = new HashMap<>();
         Set<Class<?>> clazzes = new HashSet<>();
         for (String pkg : pkgs) {
-            clazzes.addAll(ClassUtils.getAllClassByAnnotation(pkg, ResponseMessage.class));
+            clazzes.addAll(ClassUtils.getAllClassByAnnotation(pkg, ProtobufMessage.class));
         }
         if (!clazzes.isEmpty()) {
             clazzes.forEach(clazz -> {
-                ResponseMessage responseMessage = clazz.getAnnotation(ResponseMessage.class);
-                MethodInfos.put(clazz, responseMessage);
+                ProtobufMessage responseMessage = clazz.getAnnotation(ProtobufMessage.class);
+                if (responseMessage.resp()) {
+                    MethodInfos.put(clazz, responseMessage);
+                }
             });
         }
         return MethodInfos;

@@ -14,5 +14,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ProtobufMessage {
+    boolean resp() default false;
 
+    int messageType() default 0;
+
+    int cmd() default 0;
 }

@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ProtobufMessage
 public @interface ResponseMessage {
     int messageType();
 

@@ -18,7 +18,7 @@ public class PFSession extends Session<Object, MarsMessage> {
 
     public static Logger log = LoggerFactory.getLogger(PFSession.class);
 
-    public static Map<Class<?>, ResponseMessage> responseMap;
+    public static Map<Class<?>, ProtobufMessage> responseMap;
 
     public PFSession(String sessionId, Connect connect, NetAddress address) {
         super(sessionId, connect, address);
@@ -26,7 +26,7 @@ public class PFSession extends Session<Object, MarsMessage> {
 
     @Override
     public void send(Object msg) {
-        ResponseMessage responseMessage = responseMap.get(msg.getClass());
+        ProtobufMessage responseMessage = responseMap.get(msg.getClass());
         if (responseMessage == null) {
             log.warn("消息发送失败，该消息结构没有被ResponseMessage注解，msg-class={}", msg.getClass());
             return;
