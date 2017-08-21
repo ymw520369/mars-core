@@ -1,6 +1,7 @@
 package org.alan.mars.protostuff;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
@@ -16,24 +17,37 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import java.net.InetSocketAddress;
 import java.util.Map;
 
+import static io.netty.channel.ChannelHandler.*;
+
 /**
  * Created on 2017/7/27.
  *
  * @author Alan
  * @since 1.0
  */
+@Sharable
 public class MarsMessageDispatcher extends
         SimpleChannelInboundHandler<MarsMessage> implements
         ApplicationListener<ContextRefreshedEvent> {
     Logger log = LoggerFactory.getLogger(getClass());
 
+    public String[] respPkgs;
+
     private AttributeKey<PFSession> attributeKey = AttributeKey.valueOf("session");
     private Map<Integer, MessageController> messageControllers;
+
+    public MarsMessageDispatcher(String... respPkgs){
+        this.respPkgs=respPkgs;
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MarsMessage msg) throws Exception {
         int messageType = msg.messageType;
         int command = msg.cmd;
+        //心跳消息不输出
+        if (messageType!=1){
+            log.info("收到客户端消息,messageType={},cmd={}",messageType,command);
+        }
         MessageController messageController = messageControllers.get(messageType);
         PFSession session = getSession(ctx.channel());
         if (messageController != null) {
@@ -49,7 +63,7 @@ public class MarsMessageDispatcher extends
                     } else if (reference != null && clazz == reference.getClass()) {
                         args[i] = reference;
                     } else {
-                        RequestMessage rm = clazz.getAnnotation(RequestMessage.class);
+                        ProtobufMessage rm = clazz.getAnnotation(ProtobufMessage.class);
                         if (rm != null && msg.data != null && msg.data.length > 0) {
                             args[i] = ProtostuffUtil.deserialize(msg.data, clazz);
                         }
@@ -125,6 +139,6 @@ public class MarsMessageDispatcher extends
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         messageControllers = MessageUtil.load(event.getApplicationContext());
-        PFSession.responseMap = MessageUtil.loadResponseMessage();
+        PFSession.responseMap = MessageUtil.loadResponseMessage("org.alan");
     }
 }

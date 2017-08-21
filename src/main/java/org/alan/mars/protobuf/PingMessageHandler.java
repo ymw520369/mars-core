@@ -21,8 +21,8 @@ import org.springframework.stereotype.Component;
  * @author Alan
  *
  */
-@Component
-@ServerHandler
+//@Component
+//@ServerHandler
 public class PingMessageHandler implements PbMessageHandler {
 
 	private Logger log  = LoggerFactory.getLogger(getClass());

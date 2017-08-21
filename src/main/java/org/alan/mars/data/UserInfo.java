@@ -5,47 +5,36 @@
 
 package org.alan.mars.data;
 
+import org.alan.mars.net.NetAddress;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 /**
+ * 用户信息
+ * <p>
  * Created on 2017/4/13.
  *
  * @author Alan
  * @since 1.0
  */
+@Document
 public class UserInfo {
-    private String sessionId;
-    private long accountId;
-    private long roleUid;
-    private String nodePath;
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(long accountId) {
-        this.accountId = accountId;
-    }
-
-    public long getRoleUid() {
-        return roleUid;
-    }
-
-    public void setRoleUid(long roleUid) {
-        this.roleUid = roleUid;
-    }
-
-    public String getNodePath() {
-        return nodePath;
-    }
-
-    public void setNodePath(String nodePath) {
-        this.nodePath = nodePath;
-    }
+    public static final String USER_INFO = "USER_INFO:";
+    /* 第三方平台ID，在接入第三方时有用*/
+    @Indexed
+    private String pfUserId;
+    /*平台用户名*/
+    private String pfUserName;
+    /* 用户ID*/
+    public long userId;
+    /* 用户名称*/
+    public String userName;
+    /* 用户当前的认证信息*/
+    public String token;
+    /* 用户当前是否在线，避免重复登录*/
+    public boolean online;
+    /* 用户当前登录的大区*/
+    public int currentZone;
+    /* 用户当前所在机器的地址*/
+    public NetAddress logicAddress;
 }
